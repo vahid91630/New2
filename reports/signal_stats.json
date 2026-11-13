@@ -1,0 +1,118 @@
+{
+ "MR-DAY": {
+  "title": "بازگشت به میانگین (کل روز)",
+  "pick": {
+   "signals": 149,
+   "win_rate": 0.591,
+   "net_usd_001lot": 187.2,
+   "profit_factor": 1.23,
+   "avg_win": 11.52,
+   "avg_loss": -13.55
+  },
+  "unseen": {
+   "signals": 76,
+   "win_rate": 0.632,
+   "net_usd_001lot": 99.7,
+   "profit_factor": 1.27,
+   "avg_win": 9.7,
+   "avg_loss": -13.07
+  },
+  "all": {
+   "signals": 225,
+   "win_rate": 0.604,
+   "net_usd_001lot": 286.9,
+   "profit_factor": 1.24,
+   "avg_win": 10.88,
+   "avg_loss": -13.4
+  },
+  "enabled": true,
+  "per_week": 5.1
+ },
+ "ORB-NY": {
+  "title": "شکست محدودهٔ بازگشایی نیویورک",
+  "pick": {
+   "signals": 81,
+   "win_rate": 0.63,
+   "net_usd_001lot": 147.3,
+   "profit_factor": 1.34,
+   "avg_win": 11.5,
+   "avg_loss": -14.64
+  },
+  "unseen": {
+   "signals": 37,
+   "win_rate": 0.622,
+   "net_usd_001lot": 42.4,
+   "profit_factor": 1.25,
+   "avg_win": 9.14,
+   "avg_loss": -11.99
+  },
+  "all": {
+   "signals": 118,
+   "win_rate": 0.627,
+   "net_usd_001lot": 189.6,
+   "profit_factor": 1.31,
+   "avg_win": 10.77,
+   "avg_loss": -13.8
+  },
+  "enabled": true,
+  "per_week": 2.7
+ },
+ "TP-LDN": {
+  "title": "پولبک روند",
+  "pick": {
+   "signals": 827,
+   "win_rate": 0.38,
+   "net_usd_001lot": -702.7,
+   "profit_factor": 0.86,
+   "avg_win": 13.51,
+   "avg_loss": -9.64
+  },
+  "unseen": {
+   "signals": 396,
+   "win_rate": 0.376,
+   "net_usd_001lot": -414.9,
+   "profit_factor": 0.78,
+   "avg_win": 9.72,
+   "avg_loss": -7.54
+  },
+  "all": {
+   "signals": 1223,
+   "win_rate": 0.379,
+   "net_usd_001lot": -1117.6,
+   "profit_factor": 0.84,
+   "avg_win": 12.29,
+   "avg_loss": -8.96
+  },
+  "enabled": false,
+  "per_week": 27.5
+ },
+ "BO-24": {
+  "title": "شکست سقف/کف ۲ ساعته",
+  "pick": {
+   "signals": 791,
+   "win_rate": 0.364,
+   "net_usd_001lot": -1190.8,
+   "profit_factor": 0.77,
+   "avg_win": 13.54,
+   "avg_loss": -10.12
+  },
+  "unseen": {
+   "signals": 363,
+   "win_rate": 0.416,
+   "net_usd_001lot": -107.5,
+   "profit_factor": 0.93,
+   "avg_win": 10.16,
+   "avg_loss": -7.74
+  },
+  "all": {
+   "signals": 1154,
+   "win_rate": 0.38,
+   "net_usd_001lot": -1298.3,
+   "profit_factor": 0.81,
+   "avg_win": 12.38,
+   "avg_loss": -9.41
+  },
+  "enabled": false,
+  "per_week": 26.0
+ }
+}

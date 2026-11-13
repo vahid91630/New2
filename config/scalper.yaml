@@ -32,3 +32,32 @@ mt5:
   deviation_points: 30
   server_utc_offset_hours: 2  # broker server time minus UTC (check your broker; many are +2 or +3)
   dry_run: true               # true: print orders, send nothing
+
+# ---- signal bot (python -m scalper.signals) ----
+signals:
+  min_win_rate: 0.50          # a setup sends signals only if its win rate is above this
+                              # in BOTH the pick period and the unseen period
+  min_trades: 30              # ...and it has at least this many past signals in each
+  max_spread: 1.2
+  valid_minutes: 10           # a signal is stale after this
+  timezone: "Asia/Tehran"     # times shown in messages
+  telegram:                   # or env TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID
+    bot_token: null
+    chat_id: null
+  setups:
+    - id: MR-DAY
+      title: "بازگشت به میانگین (کل روز)"
+      strategy: mean_reversion
+      params: {n: 20, k: 2.0, rsi_n: 7, lo: 15, hi: 85, sl_atr: 2.5, rr: 0.7, start_h: 7, end_h: 20}
+    - id: ORB-NY
+      title: "شکست محدودهٔ بازگشایی نیویورک"
+      strategy: opening_range
+      params: {open_h: 13.5, range_min: 60, sl_frac: 0.5, rr: 1.0, window_h: 2.5}
+    - id: TP-LDN
+      title: "پولبک روند"
+      strategy: trend_pullback
+      params: {fast: 20, slow: 100, sl_atr: 1.5, rr: 1.5, start_h: 7, end_h: 20}
+    - id: BO-24
+      title: "شکست سقف/کف ۲ ساعته"
+      strategy: breakout
+      params: {n: 24, sl_atr: 1.5, rr: 1.5, start_h: 7, end_h: 20, vol_mult: 1.2}
