@@ -1,0 +1,34 @@
+Gold scalper backtest - mean_reversion {'n': 20, 'k': 2.0, 'rsi_n': 7, 'lo': 15, 'hi': 85, 'sl_atr': 2.5, 'rr': 0.7, 'start_h': 12, 'end_h': 20}
+account $300, risk 2.0%/trade, daily target $10, real tick spread + $0.05 slippage
+
+== IN-SAMPLE (used to pick the rule): 2026-01-01 -> 2026-07-31 (151 trading days)
+  balance          $300 -> $324.90   (net +24.90)
+  avg per day      $+0.16   (target $10; median day $+0.00)
+  days >= target   2%   green 15% / red 8% / no trade 77%
+  trades           38 (0.25/day), avg lot 0.01
+  win rate         61%   avg win $7.79 / avg loss $-10.28
+  profit factor    1.16
+  max drawdown     $86.14 (26%)   lowest balance $240.58
+  best / worst day $+19.69 / $-19.87
+
+== OUT-OF-SAMPLE (never seen while picking): 2026-08-03 -> 2026-11-09 (71 trading days)
+  balance          $300 -> $274.27   (net -25.73)
+  avg per day      $-0.36   (target $10; median day $+0.00)
+  days >= target   1%   green 20% / red 15% / no trade 65%
+  trades           27 (0.38/day), avg lot 0.01
+  win rate         59%   avg win $6.55 / avg loss $-11.87
+  profit factor    0.80
+  max drawdown     $54.66 (18%)   lowest balance $255.00
+  best / worst day $+10.29 / $-16.15
+
+== FULL PERIOD: 2026-01-01 -> 2026-11-09 (222 trading days)
+  balance          $300 -> $316.88   (net +16.88)
+  avg per day      $+0.08   (target $10; median day $+0.00)
+  days >= target   3%   green 17% / red 10% / no trade 73%
+  trades           68 (0.31/day), avg lot 0.01
+  win rate         60%   avg win $7.53 / avg loss $-10.81
+  profit factor    1.06
+  max drawdown     $86.14 (26%)   lowest balance $240.58
+  best / worst day $+19.69 / $-22.99
+
+monthly net ($): 2026-01: +12, 2026-02: -53, 2026-03: -15, 2026-04: -3, 2026-05: +27, 2026-06: -4, 2026-07: +61, 2026-08: -5, 2026-09: -25, 2026-10: +42, 2026-11: -20

@@ -1,0 +1,34 @@
+# Gold scalper settings.  Strategy parameters were picked on Jan–Jul 2026
+# only; Aug–Nov 2026 was kept unseen until the choice was locked.
+symbol: "XAUUSD"
+data: "data/XAUUSD_M1_2026.csv.gz"
+in_sample_end: "2026-07-31"
+
+strategy:
+  name: mean_reversion        # fade stretched moves in the London/NY overlap
+  params: {n: 20, k: 2.0, rsi_n: 7, lo: 15, hi: 85, sl_atr: 2.5, rr: 0.7, start_h: 12, end_h: 20}
+  max_hold_min: 120
+  flat_hour_utc: 21
+
+account:
+  start_balance: 300
+  risk_pct: 2.0               # target risk per trade
+  max_risk_pct: 6.0           # 0.01 lot is taken only if its loss at the stop is under this
+  max_lots: 0.10
+  leverage: 500
+  daily_target: 10            # stop for the day once +$10 is banked
+  daily_loss_pct: 5.0         # stop for the day at -5%
+  max_trades_per_day: 6
+  commission_per_lot: 0.0
+  slippage: 0.05
+  max_spread: 1.2
+  compounding: false
+
+mt5:
+  login: null                 # or env MT5_LOGIN / MT5_PASSWORD / MT5_SERVER
+  server: null
+  password: null
+  magic: 73001
+  deviation_points: 30
+  server_utc_offset_hours: 2  # broker server time minus UTC (check your broker; many are +2 or +3)
+  dry_run: true               # true: print orders, send nothing
