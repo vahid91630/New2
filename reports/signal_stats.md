@@ -1,5 +1,6 @@
 | setup | signals/week | win rate (pick) | win rate (unseen) | avg win / avg loss, 0.01 lot | net unseen, 0.01 lot | sends signals |
 |---|---|---|---|---|---|---|
+| SMC-MTF | 2.1 | 48% (61) | 55% (31) | $15.43 / $-12.83 | $+95.3 | yes (always_send, does not pass the rule) |
 | MR-DAY | 5.1 | 59% (149) | 63% (76) | $10.88 / $-13.4 | $+99.7 | YES |
 | ORB-NY | 2.7 | 63% (81) | 62% (37) | $10.77 / $-13.8 | $+42.4 | YES |
 | TP-LDN | 27.5 | 38% (827) | 38% (396) | $12.29 / $-8.96 | $-414.9 | no |

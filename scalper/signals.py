@@ -39,7 +39,7 @@ def send(cfg, text):
         print('telegram failed:', e, flush=True)
 
 
-def message(cfg, stats, setup, side, t_utc, bid, ask, sl_d, tp_d):
+def message(cfg, stats, setup, side, t_utc, bid, ask, sl_d, tp_d, info=None):
     sg, st = cfg['signals'], stats[setup['id']]
     tz = ZoneInfo(sg['timezone'])
     mid = (bid + ask) / 2
@@ -49,13 +49,18 @@ def message(cfg, stats, setup, side, t_utc, bid, ask, sl_d, tp_d):
     local = t_utc.astimezone(tz)
     until = local + timedelta(minutes=sg['valid_minutes'])
     u, a = st['unseen'], st['all']
+    why = []
+    if isinstance(info, dict):
+        d = {1: 'صعودی', -1: 'نزولی', 0: 'خنثی'}
+        why = [f"۴ساعته: {d[info['bias4h']]} | ۱ساعته: {d[info['trend1h']]}",
+               f"ناحیهٔ ۱ساعته: {info['zone']} {info['bot']:.2f} تا {info['top']:.2f} | تأییدیهٔ ۵دقیقه: {'شکست ساختار (CHoCH) ✅' if setup['params'].get('confirm', True) else 'ندارد'}"]
     return "\n".join([
         f"{'🟢 خرید' if side == 1 else '🔴 فروش'} طلا XAUUSD — {setup['id']}",
-        f"{setup['title']}",
+        f"{setup['title']}", *why,
         f"ورود: {entry:.2f}  (اسپرد {ask - bid:.2f})",
         f"حد ضرر: {sl:.2f}  (−${risk:.2f} برای هر ۰٫۰۱ لات)",
         f"حد سود: {tp:.2f}  (+${reward:.2f} برای هر ۰٫۰۱ لات)",
-        f"زمان: {local:%H:%M} — معتبر تا {until:%H:%M}، خروج حداکثر {cfg['strategy']['max_hold_min']} دقیقه بعد",
+        f"زمان: {local:%H:%M} — معتبر تا {until:%H:%M}، خروج حداکثر {setup.get('max_hold_min', cfg['strategy']['max_hold_min'])} دقیقه بعد",
         f"سابقه: برد {u['win_rate']:.0%} از {u['signals']} سیگنال دادهٔ دیده‌نشده ({a['win_rate']:.0%} از {a['signals']} در کل ۲۰۲۶)",
     ])
 
@@ -63,18 +68,19 @@ def message(cfg, stats, setup, side, t_utc, bid, ask, sl_d, tp_d):
 def replay(cfg, stats, setups, days):
     from .engine import load_m1, to_m5
     m1 = load_m1(os.path.join(ROOT, cfg['data']))
-    m1 = m1[m1.index[-1] - pd.Timedelta(days=days):]
+    start = m1.index[-1] - pd.Timedelta(days=days)
+    m1 = m1[start - pd.Timedelta(days=30):]                # 30 extra days so the 4H / 1H structure is formed
     m5 = to_m5(m1); rows = []
     for s in setups:
         sig = STRATEGIES[s['strategy']](m5, **s['params'])
-        for t, r in sig[sig['side'] != 0].iterrows():
+        for t, r in sig[(sig['side'] != 0) & (sig.index >= start)].iterrows():
             rows.append((t + pd.Timedelta(minutes=5), s, r))
     for t, s, r in sorted(rows, key=lambda x: x[0]):
         i = m1.index.searchsorted(t)
         if i >= len(m1) or m1['spread_open'].iloc[i] > cfg['signals']['max_spread']:
             continue
         bid = m1['open'].iloc[i]; ask = bid + m1['spread_open'].iloc[i]
-        print(message(cfg, stats, s, int(r['side']), m1.index[i].tz_localize('UTC').to_pydatetime(), bid, ask, r['sl'], r['tp']) + "\n")
+        print(message(cfg, stats, s, int(r['side']), m1.index[i].tz_localize('UTC').to_pydatetime(), bid, ask, r['sl'], r['tp'], r.get('info')) + "\n")
     print(f"{len(rows)} signals in the last {days} days of data")
 
 
@@ -89,10 +95,11 @@ def live(cfg, stats, setups):
     if not mt5.symbol_select(sym, True):
         raise SystemExit(f"symbol {sym} not available (your broker may call it XAUUSDm, GOLD, ...)")
     print('watching', sym, 'setups:', [s['id'] for s in setups], flush=True)
+    need = max(s.get('bars', 400) for s in setups)         # the 4H -> 1H -> 5m setup needs weeks of M5 bars
     last_bar = None
     while True:
         time.sleep(3)
-        rates = mt5.copy_rates_from_pos(sym, mt5.TIMEFRAME_M5, 1, 400)       # closed bars only
+        rates = mt5.copy_rates_from_pos(sym, mt5.TIMEFRAME_M5, 1, need)       # closed bars only
         if rates is None or len(rates) < 150:
             continue
         df = pd.DataFrame(rates)
@@ -109,7 +116,7 @@ def live(cfg, stats, setups):
         for s in setups:
             r = STRATEGIES[s['strategy']](df[['open', 'high', 'low', 'close']], **s['params']).iloc[-1]
             if r['side'] != 0:
-                send(cfg, message(cfg, stats, s, int(r['side']), datetime.now(timezone.utc), tick.bid, tick.ask, r['sl'], r['tp']))
+                send(cfg, message(cfg, stats, s, int(r['side']), datetime.now(timezone.utc), tick.bid, tick.ask, r['sl'], r['tp'], r.get('info')))
 
 
 def main():

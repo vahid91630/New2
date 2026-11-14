@@ -88,7 +88,10 @@ def opening_range(df, open_h=13.5, range_min=30, window_h=2.5, sl_frac=0.5, rr=1
     return _frame(df, first_long, first_short, sl, rr * sl_frac * height)
 
 
+from .smc import mtf_smc
+
 STRATEGIES = {
+    'mtf_smc': mtf_smc,
     'trend_pullback': trend_pullback,
     'breakout': breakout,
     'mean_reversion': mean_reversion,

@@ -45,6 +45,24 @@ signals:
     bot_token: null
     chat_id: null
   setups:
+    - id: SMC-MTF
+      title: "چندتایم‌فریم: جهت ۴ساعته، ناحیهٔ OB/FVG یک‌ساعته، تأییدیهٔ ۵دقیقه"
+      strategy: mtf_smc
+      always_send: true         # sends even though it does not pass min_win_rate in both periods
+      max_hold_min: 360
+      bars: 6000                # M5 bars read from MT5 (about 4 weeks) to build the 4H / 1H structure
+      params:
+        confirm: true           # wait for the 5m change of character inside the 1H zone
+        need_h1_trend: true     # 1H trend must agree with the 4H direction
+        rr: 1.0                 # target = 1 x stop
+        min_sl: 2.0             # $ per ounce
+        max_sl: 30.0            # skip the signal if the stop would be further than this
+        max_wait: 24            # 5m bars to wait for the confirmation after the zone is touched
+        fvg_min_atr: 0.3        # smallest 1H gap that counts, in 1H ATRs
+        zone_life_h: 48
+        start_h: 7              # UTC: London open to late New York
+        end_h: 19
+        details: true
     - id: MR-DAY
       title: "بازگشت به میانگین (کل روز)"
       strategy: mean_reversion

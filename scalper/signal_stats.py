@@ -21,7 +21,7 @@ def measure(cfg):
                   max_trades_per_day=99, max_spread=sg['max_spread'])
     out = {}
     for s in sg['setups']:
-        r = run(m1, STRATEGIES[s['strategy']](to_m5(m1), **s['params']), raw, st['max_hold_min'], st['flat_hour_utc'])
+        r = run(m1, STRATEGIES[s['strategy']](to_m5(m1), **s['params']), raw, s.get('max_hold_min', st['max_hold_min']), st['flat_hour_utc'])
         t = r.trades
         row = {'title': s['title']}
         for key, part in (('pick', t[t.t_in < split]), ('unseen', t[t.t_in >= split]), ('all', t)):
@@ -35,7 +35,8 @@ def measure(cfg):
                 'avg_loss': round(float(part.pnl[~w].mean()), 2) if (~w).any() else None,
             }
         ok = all(row[k]['signals'] >= sg['min_trades'] and row[k]['win_rate'] > sg['min_win_rate'] for k in ('pick', 'unseen'))
-        row['enabled'] = bool(ok)
+        row['passes_rule'] = bool(ok)
+        row['enabled'] = bool(ok or s.get('always_send'))     # always_send: you asked for this setup; its record is shown in every message
         row['per_week'] = round(len(t) / (r.stats['days'] / 5.0), 1)
         out[s['id']] = row
     return out
@@ -49,7 +50,7 @@ def main():
     lines = ['| setup | signals/week | win rate (pick) | win rate (unseen) | avg win / avg loss, 0.01 lot | net unseen, 0.01 lot | sends signals |', '|---|---|---|---|---|---|---|']
     for k, r in res.items():
         a = r['all']
-        lines.append(f"| {k} | {r['per_week']} | {r['pick']['win_rate']:.0%} ({r['pick']['signals']}) | {r['unseen']['win_rate']:.0%} ({r['unseen']['signals']}) | ${a['avg_win']} / ${a['avg_loss']} | ${r['unseen']['net_usd_001lot']:+} | {'YES' if r['enabled'] else 'no'} |")
+        lines.append(f"| {k} | {r['per_week']} | {r['pick']['win_rate']:.0%} ({r['pick']['signals']}) | {r['unseen']['win_rate']:.0%} ({r['unseen']['signals']}) | ${a['avg_win']} / ${a['avg_loss']} | ${r['unseen']['net_usd_001lot']:+} | {'YES' if r['passes_rule'] else 'yes (always_send, does not pass the rule)' if r['enabled'] else 'no'} |")
     md = "\n".join(lines)
     open(os.path.join(ROOT, 'reports', 'signal_stats.md'), 'w', encoding='utf-8').write(md + "\n")
     print(md)
